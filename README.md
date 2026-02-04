@@ -1,6 +1,6 @@
-# 🚀 OpenCode LLM Server
+# 🚀 Colab LLM Server & CLI
 
-Run open-source LLMs on Google Colab and use them with OpenCode via Cloudflare Tunnels.
+Run open-source LLMs on Google Colab and use them with any OpenAI-compatible client, including this CLI.
 
 ## Features
 
@@ -26,35 +26,18 @@ Run open-source LLMs on Google Colab and use them with OpenCode via Cloudflare T
 3. Wait for model download (5-10 min for large models)
 4. Copy the Cloudflare URL from Cell 6
 
-### 3. Configure OpenCode
+### 3. Use with CLI
 
-Open `~/.config/opencode/opencode.json`:
+See `OpenCodeCLI/README.md` (if available) or use the source in `OpenCodeCLI/`.
+
+### 4. Use with any generic client
 
 ```json
 {
-  "provider": {
-    "colab": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Colab LLM",
-      "options": {
-        "baseURL": "https://YOUR-URL.trycloudflare.com/v1"
-      },
-      "models": {
-        "qwen2.5-coder:7b": {
-          "name": "Qwen 2.5 Coder 7B",
-          "contextLength": 32768
-        }
-      }
-    }
-  }
+  "baseURL": "https://YOUR-URL.trycloudflare.com/v1",
+  "model": "qwen2.5-coder:7b"
 }
 ```
-
-### 4. Use OpenCode
-
-1. Restart OpenCode
-2. Select "Colab LLM" as provider
-3. Start coding!
 
 ## Available Models
 
@@ -65,40 +48,6 @@ Open `~/.config/opencode/opencode.json`:
 | deepseek-coder-v2:16b | ~10GB | ⭐⭐ | Slow | Deep reasoning |
 | codellama:13b | ~8GB | ⭐ | Medium | Code generation |
 | mistral:7b | ~5GB | ⭐ | Fast | General purpose |
-
-## Custom Tools
-
-The server supports these tools (installed in OpenCode):
-
-| Tool | Description | Location |
-|------|-------------|----------|
-| `file_write` | Create/write files | `~/.config/opencode/tools/file_write.ts` |
-| `file_read` | Read files | `~/.config/opencode/tools/file_read.ts` |
-| `shell` | Run commands | `~/.config/opencode/tools/shell.ts` |
-| `list_files` | List directory | `~/.config/opencode/tools/list_files.ts` |
-| `search` | Search in files | `~/.config/opencode/tools/search.ts` |
-
-## Troubleshooting
-
-### "Loop detected" or infinite retries
-- The server has loop prevention built-in
-- If you see this, the model may not understand the request
-- Try rephrasing or use a different model (qwen2.5-coder recommended)
-
-### Slow responses
-- Colab free tier GPUs vary in speed
-- Larger models are slower
-- Consider using qwen2.5-coder:7b for faster responses
-
-### Connection errors
-- Colab sessions timeout after ~12 hours
-- Re-run the notebook to get a new URL
-- Keep the notebook tab open
-
-### Model not using tools
-- qwen2.5-coder has the best tool support
-- deepseek-coder-v2 may not output proper tool JSON
-- The server extracts tools from text when possible
 
 ## API Endpoints
 
@@ -113,8 +62,8 @@ The server supports these tools (installed in OpenCode):
 
 ```
 ┌──────────────┐     ┌─────────────────┐     ┌──────────────┐
-│   OpenCode   │────▶│  Cloudflare     │────▶│  Flask API   │
-│   (Local)    │◀────│  Tunnel         │◀────│  (Colab)     │
+│  Any Client  │────▶│  Cloudflare     │────▶│  Flask API   │
+│   (CLI/IDE)  │◀────│  Tunnel         │◀────│  (Colab)     │
 └──────────────┘     └─────────────────┘     └──────┬───────┘
                                                     │
                                                     ▼
@@ -123,12 +72,6 @@ The server supports these tools (installed in OpenCode):
                                              │   + Model    │
                                              └──────────────┘
 ```
-
-## Version History
-
-- **v3.0** - Streaming, tool result handling, context management
-- **v2.0** - Loop prevention, comprehensive system prompt
-- **v1.0** - Basic tool support
 
 ## License
 
